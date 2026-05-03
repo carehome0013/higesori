@@ -1,16 +1,4 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- ★これ追加 -->
-<link rel="apple-touch-icon" href="icon.png">
-
-<title>髭剃り表</title>
-
-<style>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 #app{font-family:'Hiragino Sans','Meiryo',sans-serif;background:#f0f2f5;font-size:14px;}
@@ -26,17 +14,20 @@
 .btn-clear{background:#f5c842;color:#333;border:2px solid #c8a000;border-radius:6px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;}
 .btn-edit-open{background:#4a7fd9;color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;}
 .date-info{font-size:10px;color:#888;margin-top:5px;}
-
 .main-body{padding:8px;}
 .legend{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
 .legend-item{display:flex;align-items:center;gap:3px;font-size:10px;color:#666;}
 .legend-box{width:12px;height:12px;border-radius:2px;border:1px solid #bbb;flex-shrink:0;}
 
-/* テーブル：iPhone縦向きに最適化 */
+/* テーブル */
 .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;background:#fff;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.1);}
 table{border-collapse:collapse;font-size:11px;width:100%;min-width:360px;}
 th,td{border:1px solid #ccc;text-align:center;padding:0;}
-.col-name{width:80px;}.col-type{width:28px;}.col-day{width:36px;}.col-note{width:52px;}
+.col-name{width:82px;}
+.col-type{width:28px;}
+.col-day{width:36px;}
+/* 備考列：残り幅いっぱい使う */
+.col-note{width:auto;min-width:54px;max-width:72px;}
 .hdr-row th{background:#f5f7fa;padding:4px 1px;font-weight:600;font-size:10px;color:#333;}
 .hdr-sun{color:#c00;}.hdr-sat{color:#33a;}
 .name-cell{padding:2px 4px;text-align:left;background:#fff;}
@@ -46,16 +37,31 @@ th,td{border:1px solid #ccc;text-align:center;padding:0;}
 .type-cell{font-size:10px;padding:1px;background:#fafafa;}
 .type-kaijo{color:#1a8a40;font-weight:700;}
 .type-jiritsu{color:#7733cc;font-weight:700;}
-/* チェックセル：指で押しやすいサイズ */
-.check-cell{cursor:pointer;height:40px;vertical-align:middle;}
+
+/* チェックセル */
+.check-cell{cursor:pointer;height:38px;vertical-align:middle;}
 .bg-checked{background:#b8d8f8 !important;}
 .bg-pattern{background:#d6f0d6;}
 .bg-normal{background:#fff;}
-.cb-box{width:26px;height:26px;border:2.5px solid #333;border-radius:3px;display:inline-flex;align-items:center;justify-content:center;background:#fff;margin:auto;pointer-events:none;}
-.cb-box.checked{background:#fff;}
+
+/* 担当曜日セルのみチェックボックスを表示 */
+.cb-box{width:24px;height:24px;border:2.5px solid #333;border-radius:3px;display:inline-flex;align-items:center;justify-content:center;background:#fff;margin:auto;pointer-events:none;}
 .cb-box.checked svg{display:block;}
-.cb-box svg{display:none;width:16px;height:16px;}
-.note-cell{font-size:9px;color:#333;padding:2px;background:#fff;}
+.cb-box svg{display:none;width:15px;height:15px;}
+
+/* 備考：改行させず横に収める */
+.note-cell{
+  font-size:8.5px;
+  color:#333;
+  padding:1px 2px;
+  background:#fff;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:72px;
+  vertical-align:middle;
+  line-height:1.2;
+}
 .note-red{color:#c00;font-weight:600;}
 
 /* ===== 編集ページ ===== */
@@ -63,18 +69,15 @@ th,td{border:1px solid #ccc;text-align:center;padding:0;}
 .edit-header{background:#3a6fc9;color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10;box-shadow:0 2px 6px rgba(0,0,0,.2);}
 .edit-header h2{font-size:15px;font-weight:700;flex:1;}
 .btn-back{background:rgba(255,255,255,.18);color:#fff;border:1.5px solid rgba(255,255,255,.5);border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;}
-
 .edit-body{padding:10px;}
 .card{background:#fff;border-radius:10px;padding:14px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.08);}
 .card-title{font-size:13px;font-weight:700;color:#333;margin-bottom:10px;padding-bottom:8px;border-bottom:1.5px solid #eee;}
 .floor-btns{display:flex;gap:8px;flex-wrap:wrap;}
 .floor-btn{border:1.5px solid #bbb;border-radius:8px;padding:9px 0;font-size:14px;background:#fff;color:#444;cursor:pointer;font-weight:500;flex:1;text-align:center;}
 .floor-btn.active{background:#4a7fd9;color:#fff;border-color:#4a7fd9;font-weight:700;}
-
 .list-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
 .list-header span{font-size:13px;font-weight:700;color:#333;}
 .btn-new{background:#2a9a5a;color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;}
-
 .user-item{display:flex;align-items:center;gap:6px;padding:12px 0;border-bottom:1px solid #f0f0f0;cursor:pointer;}
 .user-item:last-child{border-bottom:none;}
 .user-item.selected{background:#eef3ff;margin:0 -14px;padding:12px 14px;}
@@ -86,13 +89,11 @@ th,td{border:1px solid #ccc;text-align:center;padding:0;}
 .ui-pat{font-size:10px;color:#2a7a2a;background:#d6f0d6;border-radius:3px;padding:2px 5px;white-space:nowrap;display:inline-block;}
 .ui-del{background:#e55;color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:12px;cursor:pointer;flex-shrink:0;}
 .no-user{text-align:center;color:#aaa;font-size:13px;padding:20px 0;}
-
-/* フォーム */
 .form-section{display:none;}
 .form-section.open{display:block;}
 .field{margin-bottom:14px;}
 .field label{display:block;font-size:12px;color:#555;margin-bottom:5px;font-weight:600;}
-.field input,.field select{width:100%;border:1.5px solid #ddd;border-radius:8px;padding:12px 12px;font-size:16px;color:#222;background:#fff;-webkit-appearance:none;}
+.field input,.field select{width:100%;border:1.5px solid #ddd;border-radius:8px;padding:12px;font-size:16px;color:#222;background:#fff;-webkit-appearance:none;}
 .field input:focus,.field select:focus{outline:none;border-color:#4a7fd9;box-shadow:0 0 0 3px rgba(74,127,217,.1);}
 .two-col{display:flex;gap:10px;}.two-col .field{flex:1;}
 .hint{font-size:10px;color:#aaa;margin-top:3px;}
@@ -102,10 +103,10 @@ th,td{border:1px solid #ccc;text-align:center;padding:0;}
 .btn-cancel-form{flex:1;background:#f0f0f0;color:#555;border:none;border-radius:8px;padding:14px;font-size:15px;cursor:pointer;}
 .err{color:#c00;font-size:12px;margin-top:6px;min-height:16px;}
 
-/* 削除確認 */
-.confirm-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;align-items:flex-end;justify-content:center;padding-bottom:env(safe-area-inset-bottom,0);}
+/* 削除確認（下からシート） */
+.confirm-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;align-items:flex-end;justify-content:center;}
 .confirm-bg.open{display:flex;}
-.confirm-box{background:#fff;border-radius:16px 16px 0 0;padding:24px 20px 32px;width:100%;max-width:500px;text-align:center;}
+.confirm-box{background:#fff;border-radius:16px 16px 0 0;padding:24px 20px 36px;width:100%;max-width:500px;text-align:center;}
 .confirm-name{font-size:15px;font-weight:700;color:#222;margin-bottom:6px;}
 .confirm-sub{font-size:13px;color:#888;margin-bottom:20px;}
 .confirm-btns{display:flex;flex-direction:column;gap:10px;}
@@ -205,7 +206,7 @@ th,td{border:1px solid #ccc;text-align:center;padding:0;}
     </div>
   </div>
 
-  <!-- 削除確認（下から出るシート） -->
+  <!-- 削除確認 -->
   <div class="confirm-bg" id="confirm-bg" onclick="bgClose(event)">
     <div class="confirm-box">
       <div class="confirm-name" id="confirm-name"></div>
@@ -260,7 +261,7 @@ function getWeekDates(){
   for(var i=0;i<7;i++){var d=new Date(sun);d.setDate(sun.getDate()+i);arr.push(d);}
   return arr;
 }
-function weekKey(dates){return dates[0].getFullYear()+'-'+(dates[0].getMonth()+1)+'-'+dates[0].getDate();}
+function weekKey(d){return d[0].getFullYear()+'-'+(d[0].getMonth()+1)+'-'+d[0].getDate();}
 function isPat(row,col){return col===row%7||col===(row+3)%7;}
 function patLabel(row){return DAY[row%7]+'・'+DAY[(row+3)%7];}
 function rKey(u){return(parseInt(u.room)||99999)*10+(parseInt(u.roomNum)||0);}
@@ -321,28 +322,57 @@ function render(){
   tb.innerHTML='';
   sorted.forEach(function(u,ri){
     var tr=document.createElement('tr');
+
+    // 名前
     var tdN=document.createElement('td');tdN.className='name-cell';
     var ni=document.createElement('div');ni.className='name-inner';
     var rb=document.createElement('span');rb.className='room-badge';rb.textContent=rLabel(u);
     var nt=document.createElement('span');nt.className='name-txt';
     nt.textContent=((u.sei||'')+(u.mei?' '+u.mei:'')||'　')+' 様';
     ni.appendChild(rb);ni.appendChild(nt);tdN.appendChild(ni);tr.appendChild(tdN);
+
+    // 対応
     var tdT=document.createElement('td');tdT.className='type-cell';
     var sp=document.createElement('span');
     sp.className=u.type==='介助'?'type-kaijo':u.type==='自立'?'type-jiritsu':'';
     sp.textContent=u.type;tdT.appendChild(sp);tr.appendChild(tdT);
+
+    // チェックセル
     for(var d=0;d<7;d++){
       var td=document.createElement('td');td.className='check-cell';
-      td.classList.add(u.checks[d]?'bg-checked':isPat(ri,d)?'bg-pattern':'bg-normal');
-      td.appendChild(makeCB(u.checks[d]===1));
-      (function(uRef,di){td.onclick=function(){
-        var idx=users.indexOf(uRef);
-        if(idx>=0){users[idx].checks[di]=users[idx].checks[di]?0:1;render();}
-      };})(u,d);
+      var pat=isPat(ri,d);
+      var chk=u.checks[d]===1;
+
+      if(chk){
+        // 実施済み：青背景＋チェックボックス
+        td.classList.add('bg-checked');
+        td.appendChild(makeCB(true));
+      } else if(pat){
+        // 担当曜日：緑背景＋空チェックボックス
+        td.classList.add('bg-pattern');
+        td.appendChild(makeCB(false));
+      } else {
+        // 非担当：白背景、チェックボックスなし（空セル）
+        td.classList.add('bg-normal');
+      }
+
+      (function(uRef,di,isPatt){
+        td.onclick=function(){
+          // 担当曜日または実施済みのセルのみトグル可能
+          if(!isPatt && !uRef.checks[di]) return;
+          var idx=users.indexOf(uRef);
+          if(idx>=0){users[idx].checks[di]=users[idx].checks[di]?0:1;render();}
+        };
+      })(u,d,pat);
       tr.appendChild(td);
     }
+
+    // 備考
     var tdNt=document.createElement('td');tdNt.className='note-cell';
-    if(u.note){var s=document.createElement('span');s.className='note-red';s.textContent=u.note;tdNt.appendChild(s);}
+    if(u.note){
+      var s=document.createElement('span');s.className='note-red';s.textContent=u.note;
+      tdNt.appendChild(s);
+    }
     tr.appendChild(tdNt);
     tb.appendChild(tr);
   });
@@ -368,7 +398,7 @@ function renderList(){
     var nm=document.createElement('div');nm.className='ui-name';
     nm.textContent=((u.sei||'')+(u.mei?' '+u.mei:'')||'（未入力）')+' 様';
     var sub=document.createElement('div');sub.className='ui-sub';
-    sub.innerHTML=u.type+' &nbsp;<span class="ui-pat">'+patLabel(si)+'</span>';
+    sub.innerHTML=u.type+'　<span class="ui-pat">'+patLabel(si)+'</span>';
     info.appendChild(nm);info.appendChild(sub);
     item.appendChild(info);
     var db=document.createElement('button');db.className='ui-del';db.textContent='削除';
@@ -402,11 +432,7 @@ function openForm(idx){
   renderList();
   setTimeout(function(){document.getElementById('form-card').scrollIntoView({behavior:'smooth'});},120);
 }
-function closeForm(){
-  editIdx=-1;
-  document.getElementById('form-card').classList.remove('open');
-  renderList();
-}
+function closeForm(){editIdx=-1;document.getElementById('form-card').classList.remove('open');renderList();}
 function updatePreview(){
   var full=(document.getElementById('inp-room-full').value||'').trim();
   var num=(document.getElementById('inp-room-num').value||'').trim();
@@ -438,23 +464,13 @@ function saveForm(){
 function openConfirm(idx){
   deleteIdx=idx;
   var u=users[idx];
-  document.getElementById('confirm-name').textContent=
-    ((u.sei||'')+(u.mei?' '+u.mei:'')||'この利用者')+' 様';
+  document.getElementById('confirm-name').textContent=((u.sei||'')+(u.mei?' '+u.mei:'')||'この利用者')+' 様';
   document.getElementById('confirm-bg').classList.add('open');
 }
 function closeConfirm(){document.getElementById('confirm-bg').classList.remove('open');deleteIdx=-1;}
 function bgClose(e){if(e.target===document.getElementById('confirm-bg'))closeConfirm();}
-function doDelete(){
-  if(deleteIdx<0)return;
-  users.splice(deleteIdx,1);
-  closeConfirm();closeForm();
-}
-setInterval(function(){
-  var dates=getWeekDates(),k=weekKey(dates);
-  if(k!==lastWeekKey)render();
-},60000);
+function doDelete(){if(deleteIdx<0)return;users.splice(deleteIdx,1);closeConfirm();closeForm();}
+
+setInterval(function(){var dates=getWeekDates(),k=weekKey(dates);if(k!==lastWeekKey)render();},60000);
 updateTitle();render();
 </script>
-</script>
-</body>
-</html>
