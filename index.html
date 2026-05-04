@@ -1,4 +1,13 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>髭剃り表</title>
 
+<link rel="icon" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+</head>
+<body>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 #app{font-family:'Hiragino Sans','Meiryo',sans-serif;background:#f0f2f5;font-size:14px;}
@@ -474,3 +483,5 @@ function doDelete(){if(deleteIdx<0)return;users.splice(deleteIdx,1);closeConfirm
 setInterval(function(){var dates=getWeekDates(),k=weekKey(dates);if(k!==lastWeekKey)render();},60000);
 updateTitle();render();
 </script>
+</body>
+</html>
