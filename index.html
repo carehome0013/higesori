@@ -1,19 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
 
-  <!-- ここに追加 -->
-  <link rel="icon" href="icon.png">
-  <link rel="apple-touch-icon" href="icon.png">
-
-  <style>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 #app{font-family:'Hiragino Sans','Meiryo',sans-serif;background:#f0f2f5;font-size:14px;}
 .page{display:none;flex-direction:column;min-height:100%;}
 .page.active{display:flex;}
 
+/* ===== メイン ===== */
 .main-header{background:#fff;padding:10px 12px 8px;box-shadow:0 1px 3px rgba(0,0,0,.1);position:sticky;top:0;z-index:10;}
 .top-bar{display:flex;align-items:center;gap:6px;}
 .top-left{display:flex;align-items:center;gap:6px;flex:1;min-width:0;}
@@ -27,53 +19,49 @@
 .legend-item{display:flex;align-items:center;gap:3px;font-size:10px;color:#666;}
 .legend-box{width:12px;height:12px;border-radius:2px;border:1px solid #bbb;flex-shrink:0;}
 
-/* ★ テーブル：名前列を内容に合わせる */
+/* テーブル */
 .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;background:#fff;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.1);}
-table{
-  border-collapse:collapse;
-  font-size:11px;
-  /* width指定なし → 内容に応じた幅 */
-  width:auto;
-  /* ★ table-layout:auto で各列が内容に合わせて伸縮 */
-  table-layout:auto;
-}
+table{border-collapse:collapse;font-size:11px;width:100%;min-width:360px;}
 th,td{border:1px solid #ccc;text-align:center;padding:0;}
-
-/* 名前列：内容に合わせる・折り返しなし */
-.col-name{
-  white-space:nowrap;   /* 折り返し禁止 */
-  /* width指定なし → auto */
-}
+.col-name{width:82px;}
 .col-type{width:28px;}
 .col-day{width:36px;}
-.col-note{
-  white-space:nowrap;
-  width:1%;           /* できるだけ小さく → 内容だけ */
-  min-width:44px;
-}
-
-.hdr-row th{background:#f5f7fa;padding:4px 3px;font-weight:600;font-size:10px;color:#333;white-space:nowrap;}
+/* 備考列：残り幅いっぱい使う */
+.col-note{width:auto;min-width:54px;max-width:72px;}
+.hdr-row th{background:#f5f7fa;padding:4px 1px;font-weight:600;font-size:10px;color:#333;}
 .hdr-sun{color:#c00;}.hdr-sat{color:#33a;}
-
-.name-cell{padding:2px 5px;text-align:left;background:#fff;white-space:nowrap;}
-.name-inner{display:inline-flex;align-items:center;gap:3px;}
+.name-cell{padding:2px 4px;text-align:left;background:#fff;}
+.name-inner{display:flex;align-items:center;gap:3px;}
 .room-badge{font-size:9px;color:#fff;background:#777;border-radius:2px;padding:1px 3px;white-space:nowrap;flex-shrink:0;}
-.name-txt{font-size:10px;white-space:nowrap;color:#222;}
-
-.type-cell{font-size:10px;padding:1px 2px;background:#fafafa;white-space:nowrap;}
+.name-txt{font-size:10px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#222;}
+.type-cell{font-size:10px;padding:1px;background:#fafafa;}
 .type-kaijo{color:#1a8a40;font-weight:700;}
 .type-jiritsu{color:#7733cc;font-weight:700;}
 
+/* チェックセル */
 .check-cell{cursor:pointer;height:38px;vertical-align:middle;}
 .bg-checked{background:#b8d8f8 !important;}
 .bg-pattern{background:#d6f0d6;}
 .bg-normal{background:#fff;}
 
+/* 担当曜日セルのみチェックボックスを表示 */
 .cb-box{width:24px;height:24px;border:2.5px solid #333;border-radius:3px;display:inline-flex;align-items:center;justify-content:center;background:#fff;margin:auto;pointer-events:none;}
 .cb-box.checked svg{display:block;}
 .cb-box svg{display:none;width:15px;height:15px;}
 
-.note-cell{font-size:8.5px;color:#333;padding:1px 3px;background:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle;}
+/* 備考：改行させず横に収める */
+.note-cell{
+  font-size:8.5px;
+  color:#333;
+  padding:1px 2px;
+  background:#fff;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:72px;
+  vertical-align:middle;
+  line-height:1.2;
+}
 .note-red{color:#c00;font-weight:600;}
 
 /* ===== 編集ページ ===== */
@@ -115,6 +103,7 @@ th,td{border:1px solid #ccc;text-align:center;padding:0;}
 .btn-cancel-form{flex:1;background:#f0f0f0;color:#555;border:none;border-radius:8px;padding:14px;font-size:15px;cursor:pointer;}
 .err{color:#c00;font-size:12px;margin-top:6px;min-height:16px;}
 
+/* 削除確認（下からシート） */
 .confirm-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;align-items:flex-end;justify-content:center;}
 .confirm-bg.open{display:flex;}
 .confirm-box{background:#fff;border-radius:16px 16px 0 0;padding:24px 20px 36px;width:100%;max-width:500px;text-align:center;}
@@ -126,6 +115,7 @@ th,td{border:1px solid #ccc;text-align:center;padding:0;}
 </style>
 
 <div id="app">
+  <!-- メインページ -->
   <div id="page-main" class="page active">
     <div class="main-header">
       <div class="top-bar">
@@ -145,7 +135,7 @@ th,td{border:1px solid #ccc;text-align:center;padding:0;}
         <div style="font-size:10px;color:#aaa;margin-left:auto;">← 横スクロール</div>
       </div>
       <div class="tbl-wrap">
-        <table id="main-table">
+        <table>
           <thead>
             <tr class="hdr-row" id="hdr-youbi"></tr>
             <tr class="hdr-row" id="hdr-date"></tr>
@@ -156,6 +146,7 @@ th,td{border:1px solid #ccc;text-align:center;padding:0;}
     </div>
   </div>
 
+  <!-- 編集ページ -->
   <div id="page-edit" class="page">
     <div class="edit-header">
       <button class="btn-back" onclick="goMain()">← 戻る</button>
@@ -215,6 +206,7 @@ th,td{border:1px solid #ccc;text-align:center;padding:0;}
     </div>
   </div>
 
+  <!-- 削除確認 -->
   <div class="confirm-bg" id="confirm-bg" onclick="bgClose(event)">
     <div class="confirm-box">
       <div class="confirm-name" id="confirm-name"></div>
@@ -250,6 +242,7 @@ function showPage(id){
 }
 function goMain(){showPage('page-main');render();}
 function goEdit(){closeForm();showPage('page-edit');syncFloor();renderList();}
+
 function setFloor(btn){
   currentFloor=parseInt(btn.getAttribute('data-floor'));
   syncFloor();updateTitle();
@@ -330,7 +323,7 @@ function render(){
   sorted.forEach(function(u,ri){
     var tr=document.createElement('tr');
 
-    // ★ 名前列：内容幅のみ（white-space:nowrap + table-layout:autoで自動調整）
+    // 名前
     var tdN=document.createElement('td');tdN.className='name-cell';
     var ni=document.createElement('div');ni.className='name-inner';
     var rb=document.createElement('span');rb.className='room-badge';rb.textContent=rLabel(u);
@@ -349,18 +342,24 @@ function render(){
       var td=document.createElement('td');td.className='check-cell';
       var pat=isPat(ri,d);
       var chk=u.checks[d]===1;
+
       if(chk){
+        // 実施済み：青背景＋チェックボックス
         td.classList.add('bg-checked');
         td.appendChild(makeCB(true));
       } else if(pat){
+        // 担当曜日：緑背景＋空チェックボックス
         td.classList.add('bg-pattern');
         td.appendChild(makeCB(false));
       } else {
+        // 非担当：白背景、チェックボックスなし（空セル）
         td.classList.add('bg-normal');
       }
+
       (function(uRef,di,isPatt){
         td.onclick=function(){
-          if(!isPatt&&!uRef.checks[di])return;
+          // 担当曜日または実施済みのセルのみトグル可能
+          if(!isPatt && !uRef.checks[di]) return;
           var idx=users.indexOf(uRef);
           if(idx>=0){users[idx].checks[di]=users[idx].checks[di]?0:1;render();}
         };
@@ -370,7 +369,10 @@ function render(){
 
     // 備考
     var tdNt=document.createElement('td');tdNt.className='note-cell';
-    if(u.note){var s=document.createElement('span');s.className='note-red';s.textContent=u.note;tdNt.appendChild(s);}
+    if(u.note){
+      var s=document.createElement('span');s.className='note-red';s.textContent=u.note;
+      tdNt.appendChild(s);
+    }
     tr.appendChild(tdNt);
     tb.appendChild(tr);
   });
